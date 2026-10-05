@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
 #=====================add button=========================
         self.btn_home = QtWidgets.QPushButton(self.group_menu)
         self.btn_home.setObjectName("btn_home")
-        self.btn_home.setText("    Accueil")
+        self.btn_home.setText("    Accueil1111")
         self.btn_home.setIcon(QtGui.QIcon("icon/home.png"))
         self.btn_home.setIconSize(QtCore.QSize(int(screen_height * 4/ 100), int(screen_height * 4 / 100)))
         #=====================add layout menu=========================
