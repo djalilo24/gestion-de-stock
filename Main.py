@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from style import use_style
 from PyQt5.QtGui import QIcon
+from form_supplier import Fournisseurs
 
 class Ui_MainWindow(object):
 
@@ -57,6 +58,7 @@ class Ui_MainWindow(object):
         self.btn_fournisseurs.setText("    Fournisseurs")
         self.btn_fournisseurs.setIcon(QtGui.QIcon("icon/supplier.png"))
         self.btn_fournisseurs.setIconSize(QtCore.QSize(int(screen_height * 5/ 100), int(screen_height * 5 / 100)))
+        self.btn_fournisseurs.clicked.connect(self.supplier_button_clicked)
         #========bouton selected===============
         self.menu_group = QtWidgets.QButtonGroup(MainWindow)
         self.menu_group.setExclusive(True)
@@ -72,6 +74,20 @@ class Ui_MainWindow(object):
         self.menu_layout.addWidget(self.btn_fournisseurs)
         self.menu_layout.addStretch()
 #=====================add form=========================
+        self.fournisseurs = Fournisseurs()
+        
+#=====================Function=========================
+    def supplier_button_clicked(self):
+        while self.main_layout.count():
+            item = self.main_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.setParent(None)
+        self.fournisseurs = Fournisseurs()
+        self.main_layout.addWidget(self.fournisseurs)
+#=====================Function CHIKEIN FORM=========================
+    def chicken_button_clicked(self):
+        
 
 if __name__ == "__main__":
     import sys
