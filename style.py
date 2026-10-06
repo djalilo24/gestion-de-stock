@@ -42,5 +42,11 @@ def use_style(app):
            QPushButton:hover {
             color: white;
             }
+            QPushButton:checked {
+            background-color: #d6e4f0;
+            color: #1a5276;
+            font-weight: bold;
+            border-radius: 8px;
+        }
 
     """)

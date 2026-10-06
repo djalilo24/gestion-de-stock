@@ -45,17 +45,33 @@ class Ui_MainWindow(object):
         self.main_layout.addWidget(self.group_menu, 2)
         self.main_layout.addWidget(self.main_content, 8)
 #=====================add button=========================
+        #============bouton home============
         self.btn_home = QtWidgets.QPushButton(self.group_menu)
         self.btn_home.setObjectName("btn_home")
-        self.btn_home.setText("    Accueil1111")
+        self.btn_home.setText("    Accueil")
         self.btn_home.setIcon(QtGui.QIcon("icon/home.png"))
-        self.btn_home.setIconSize(QtCore.QSize(int(screen_height * 4/ 100), int(screen_height * 4 / 100)))
+        self.btn_home.setIconSize(QtCore.QSize(int(screen_height * 4.5/ 100), int(screen_height * 4.5 / 100)))
+        #===========bouton supplier ============
+        self.btn_fournisseurs = QtWidgets.QPushButton(self.group_menu)
+        self.btn_fournisseurs.setObjectName("btn_fournisseurs")
+        self.btn_fournisseurs.setText("    Fournisseurs")
+        self.btn_fournisseurs.setIcon(QtGui.QIcon("icon/supplier.png"))
+        self.btn_fournisseurs.setIconSize(QtCore.QSize(int(screen_height * 5/ 100), int(screen_height * 5 / 100)))
+        #========bouton selected===============
+        self.menu_group = QtWidgets.QButtonGroup(MainWindow)
+        self.menu_group.setExclusive(True)
+        self.btn_home.setCheckable(True)
+        self.btn_fournisseurs.setCheckable(True)
+        self.menu_group.addButton(self.btn_home)
+        self.menu_group.addButton(self.btn_fournisseurs)
         #=====================add layout menu=========================
         self.menu_layout = QtWidgets.QVBoxLayout(self.group_menu)
         self.menu_layout.setContentsMargins(10, 20, 10, 10)
         self.menu_layout.setSpacing(10)
         self.menu_layout.addWidget(self.btn_home)
+        self.menu_layout.addWidget(self.btn_fournisseurs)
         self.menu_layout.addStretch()
+#=====================add form=========================
 
 if __name__ == "__main__":
     import sys
