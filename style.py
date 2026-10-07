@@ -48,5 +48,32 @@ def use_style(app):
             font-weight: bold;
             border-radius: 8px;
         }
+      QLineEdit {
+        background-color: white;
+        border: 1px solid #B8C2CC;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 18px;
+        color: #333333;
+       }
 
+        QLineEdit:focus {
+        border: 2px solid #3E6DEC;
+        }
+
+        QLineEdit:hover {
+        border: 1px solid #3E6DEC;
+        }
+
+       QLineEdit::placeholder {
+        color: #999999;
+        }
+        QLabel {
+        background-color: transparent;
+        color: #333333;
+        font-family: "Sakkal Majalla";
+        font-size: 20px;
+        font-weight: bold;
+        padding: 2px;
+       }
     """)

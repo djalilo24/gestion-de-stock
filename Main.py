@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from style import use_style
 from PyQt5.QtGui import QIcon
 from form_supplier import Fournisseurs
-
+from from_home import Home
 class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
@@ -42,6 +42,12 @@ class Ui_MainWindow(object):
         #=====================group content=========================
         self.main_content = QtWidgets.QGroupBox()
         self.main_content.setObjectName("main_content")
+        # ================= pages =========================
+        self.pages = QtWidgets.QStackedWidget()
+        # نضع pages داخل main_content
+        self.content_layout = QtWidgets.QVBoxLayout(self.main_content)
+        self.content_layout.setContentsMargins(10, 10, 10, 10)
+        self.content_layout.addWidget(self.pages) 
         #=================add layout=========================
         self.main_layout.addWidget(self.group_menu, 2)
         self.main_layout.addWidget(self.main_content, 8)
@@ -52,6 +58,7 @@ class Ui_MainWindow(object):
         self.btn_home.setText("    Accueil")
         self.btn_home.setIcon(QtGui.QIcon("icon/home.png"))
         self.btn_home.setIconSize(QtCore.QSize(int(screen_height * 4.5/ 100), int(screen_height * 4.5 / 100)))
+        self.btn_home.clicked.connect(self.home_button_clicked)
         #===========bouton supplier ============
         self.btn_fournisseurs = QtWidgets.QPushButton(self.group_menu)
         self.btn_fournisseurs.setObjectName("btn_fournisseurs")
@@ -73,20 +80,18 @@ class Ui_MainWindow(object):
         self.menu_layout.addWidget(self.btn_home)
         self.menu_layout.addWidget(self.btn_fournisseurs)
         self.menu_layout.addStretch()
-#=====================add form=========================
-        self.fournisseurs = Fournisseurs()
-        
-#=====================Function=========================
+#=====================Functions Boutons=========================  
+    #bouton fournisseur==========      
     def supplier_button_clicked(self):
-        while self.main_layout.count():
-            item = self.main_layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.setParent(None)
-        self.fournisseurs = Fournisseurs()
-        self.main_layout.addWidget(self.fournisseurs)
-#=====================Function CHIKEIN FORM=========================
-    def chicken_button_clicked(self):
+        fournisseur_page = Fournisseurs()
+        self.pages.addWidget(fournisseur_page)
+        self.pages.setCurrentWidget(fournisseur_page)
+    #bouton fournisseur==========      
+    def home_button_clicked(self):
+        home_page = Home()
+        self.pages.addWidget(home_page)
+        self.pages.setCurrentWidget(home_page)
+
         
 
 if __name__ == "__main__":
