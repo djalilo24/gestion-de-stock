@@ -72,8 +72,40 @@ def use_style(app):
         background-color: transparent;
         color: #333333;
         font-family: "Sakkal Majalla";
-        font-size: 20px;
+        font-size: 25px;
         font-weight: bold;
         padding: 2px;
        }
+       QCalendarWidget {
+    background-color: white;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+}
+
+QCalendarWidget QToolButton {
+    color: black;
+    background-color: white;
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+}
+
+QCalendarWidget QToolButton:hover {
+    background-color: #e8eaf6;
+    border-radius: 5px;
+}
+
+QCalendarWidget QSpinBox {
+    font-size: 14px;
+}
+
+QCalendarWidget QAbstractItemView {
+    font-size: 14px;
+    selection-background-color: #6771C5;
+    selection-color: white;
+}
+QDateEdit {
+    font-size: 25px;
+    padding: 6px;
+}
     """)

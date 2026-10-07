@@ -44,7 +44,6 @@ class Ui_MainWindow(object):
         self.main_content.setObjectName("main_content")
         # ================= pages =========================
         self.pages = QtWidgets.QStackedWidget()
-        # نضع pages داخل main_content
         self.content_layout = QtWidgets.QVBoxLayout(self.main_content)
         self.content_layout.setContentsMargins(10, 10, 10, 10)
         self.content_layout.addWidget(self.pages) 
