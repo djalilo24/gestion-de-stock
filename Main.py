@@ -73,7 +73,7 @@ class Ui_MainWindow(object):
         self.btn_home.clicked.connect(self.home_button_clicked)
         #============bouton product============
         self.btn_product = QtWidgets.QPushButton(self.group_menu)
-        self.btn_product.setText(" Products")
+        self.btn_product.setText(" Produits")
         self.btn_product.setIcon(QtGui.QIcon("icons/products.png"))
         self.btn_product.setIconSize(QtCore.QSize(int(screen_height * 5.5/ 100), int(screen_height * 5.5 / 100)))
         self.btn_product.clicked.connect(self.product_button_clicked)
