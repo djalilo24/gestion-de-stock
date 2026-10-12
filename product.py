@@ -127,10 +127,21 @@ class Product(QtWidgets.QWidget):
         self.choix_categorie.addItems(["","Tissu","Fil à coudre","Boton","Fermeture éclair","Doublure","Élastique","Accessoires","Emballage","Autre" ])
         self.choix_categorie.setVisible(False)
 
-        self.lable_color_produit = QtWidgets.QLabel(self.product_window)
+        self.lable_color_produit = QtWidgets.QLabel("Coulor de produit",self.product_window)
         self.lable_color_produit.setGeometry(
-          int 
+             int(W * 0.05), int(H * 0.50),
+             int(W * 0.25), int(H * 0.10)  
         )
+        self.lable_color_produit.setVisible(False)
+        self.line_color_produit = QtWidgets.QLineEdit(self.product_window)
+        self.line_color_produit.setPlaceholderText("Coulor")
+        self.line_color_produit.setGeometry(
+             int(W * 0.22), int(H * 0.50),
+             int(W * 0.15), int(H * 0.10)   
+        )
+        self.line_color_produit.setVisible(False)
+
+        #quentiti+prix d'acha
 
         
 
@@ -148,6 +159,8 @@ class Product(QtWidgets.QWidget):
                self.line_edite_fournisseur.setVisible(True)  # Afficher le QLine
                self.lable_categorie_produit.setVisible(True)
                self.choix_categorie.setVisible(True)
+               self.lable_color_produit.setVisible(True)
+               self.line_color_produit.setVisible(True)
 
 
         elif selected_product == "Produit fini":
