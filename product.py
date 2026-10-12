@@ -56,13 +56,41 @@ class Product(QtWidgets.QWidget):
         H = int(geometry.height() * 0.50)
 
         self.product_window.resize(W, H)
-        self.product_label = QtWidgets.QLabel("Nouveau produit", self.product_window)
+        self.product_label = QtWidgets.QLabel("Nom du produit", self.product_window)
         self.product_label.setGeometry(
              int(W * 0.05), int(H * 0.05),
              int(W * 0.90), int(H * 0.12))
         self.line_edite_nom = QtWidgets.QLineEdit(self.product_window)
         self.line_edite_nom.setPlaceholderText("Nom du produit")
         self.line_edite_nom.setGeometry(
-             int(W * 0.010), int(H * 0.25),
+             int(W * 0.20), int(H * 0.05),
              int(W * 0.30), int(H * 0.10))
+        self.labele_code = QtWidgets.QLabel("Code du produit", self.product_window)
+        self.labele_code.setGeometry(
+             int(W * 0.52), int(H * 0.05),
+             int(W * 0.90), int(H * 0.10))
+        self.line_edite_code = QtWidgets.QLineEdit(self.product_window)
+        self.line_edite_code.setPlaceholderText("Code du produit")
+        self.line_edite_code.setGeometry(
+             int(W * 0.68), int(H * 0.05),
+             int(W * 0.30), int(H * 0.10))
+        self.line_edite_code.setEnabled(False)
+        self.labele_fournisseur = QtWidgets.QLabel("Fournisseur", self.product_window)
+        self.labele_fournisseur.setGeometry(
+             int(W * 0.05), int(H * 0.20),
+             int(W * 0.90), int(H * 0.10))
+        self.choix_fournisseur = QtWidgets.QComboBox(self.product_window)
+        self.choix_fournisseur.setGeometry(
+                int(W * 0.20), int(H * 0.20),
+                int(W * 0.30), int(H * 0.10))
+        self.quintite_label = QtWidgets.QLabel("Quantité minimale", self.product_window)
+        self.quintite_label.setGeometry(
+             int(W * 0.52), int(H * 0.20),
+             int(W * 0.90), int(H * 0.10))
+        self.line_edite_quantite = QtWidgets.QLineEdit(self.product_window)
+        self.line_edite_quantite.setPlaceholderText("Quantité minimale")
+        self.line_edite_quantite.setGeometry(
+             int(W * 0.72), int(H * 0.20),
+             int(W * 0.20), int(H * 0.10))
+
         self.product_window.show()
