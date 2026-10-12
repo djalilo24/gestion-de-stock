@@ -215,4 +215,40 @@ QScrollBar::handle:horizontal {
     min-width: 25px;
     border-radius: 5px;
 }
+    QComboBox {
+        background-color: white;
+        color: #2C3E50;
+        border: 1px solid #B8C2CC;
+        border-radius: 8px;
+        padding: 6px 10px;
+        min-height: 28px;
+        font-family: "Sakkal Majalla";
+        font-size: 28px;
+    }
+
+    QComboBox:hover {
+        border: 1px solid #3498DB;
+    }
+
+    QComboBox:focus {
+        border: 1px solid #2980B9;
+    }
+
+    QComboBox::drop-down {
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        width: 30px;
+        border-left: 1px solid #D5DDE5;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    QComboBox QAbstractItemView {
+        background-color: white;
+        color: #2C3E50;
+        selection-background-color: #D6EAF8;
+        selection-color: #154360;
+        border: 1px solid #B8C2CC;
+        outline: 0;
+    }
     """)

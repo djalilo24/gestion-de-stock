@@ -56,17 +56,9 @@ class Product(QtWidgets.QWidget):
         H = int(geometry.height() * 0.50)
 
         self.product_window.resize(W, H)
-        self.product_label = QtWidgets.QLabel("Nom du produit", self.product_window)
-        self.product_label.setGeometry(
-             int(W * 0.05), int(H * 0.05),
-             int(W * 0.90), int(H * 0.12))
-        self.line_edite_nom = QtWidgets.QLineEdit(self.product_window)
-        self.line_edite_nom.setPlaceholderText("Nom du produit")
-        self.line_edite_nom.setGeometry(
-             int(W * 0.20), int(H * 0.05),
-             int(W * 0.30), int(H * 0.10))
-        self.labele_code = QtWidgets.QLabel("Code du produit", self.product_window)
-        self.labele_code.setGeometry(
+
+        self.labele_code_produit = QtWidgets.QLabel("Code du produit", self.product_window)
+        self.labele_code_produit.setGeometry(
              int(W * 0.52), int(H * 0.05),
              int(W * 0.90), int(H * 0.10))
         self.line_edite_code = QtWidgets.QLineEdit(self.product_window)
@@ -74,23 +66,89 @@ class Product(QtWidgets.QWidget):
         self.line_edite_code.setGeometry(
              int(W * 0.68), int(H * 0.05),
              int(W * 0.30), int(H * 0.10))
-        self.line_edite_code.setEnabled(False)
-        self.labele_fournisseur = QtWidgets.QLabel("Fournisseur", self.product_window)
-        self.labele_fournisseur.setGeometry(
+        self.line_edite_code.setEnabled(False)  
+
+        self.labele_choix_produit = QtWidgets.QLabel("Type de produit", self.product_window)
+        self.labele_choix_produit .setGeometry(
+             int(W * 0.05), int(H * 0.05),
+             int(W * 0.90), int(H * 0.12))
+        self.choix_produit = QtWidgets.QComboBox(self.product_window)
+        self.choix_produit.setGeometry(
+             int(W * 0.20), int(H * 0.05),
+             int(W * 0.30), int(H * 0.10))
+        self.choix_produit.addItems(["","Matière première","Produit fini"])
+        self.choix_produit.currentIndexChanged.connect(lambda: self.choice_product(H, W))
+
+        self.label_nom_produit = QtWidgets.QLabel("Nom du produit", self.product_window)
+        self.label_nom_produit.setGeometry(
              int(W * 0.05), int(H * 0.20),
              int(W * 0.90), int(H * 0.10))
-        self.choix_fournisseur = QtWidgets.QComboBox(self.product_window)
-        self.choix_fournisseur.setGeometry(
-                int(W * 0.20), int(H * 0.20),
-                int(W * 0.30), int(H * 0.10))
+        self.label_nom_produit.setVisible(False)  # Masquer le label au départ
+        self.line_edite_nom = QtWidgets.QLineEdit(self.product_window)
+        self.line_edite_nom.setPlaceholderText("Nom du produit")
+        self.line_edite_nom.setGeometry(
+             int(W * 0.20), int(H * 0.20),
+             int(W * 0.30), int(H * 0.10))
+        self.line_edite_nom.setVisible(False)  # Masquer le QLineEdit au départ
         self.quintite_label = QtWidgets.QLabel("Quantité minimale", self.product_window)
         self.quintite_label.setGeometry(
              int(W * 0.52), int(H * 0.20),
              int(W * 0.90), int(H * 0.10))
+        self.quintite_label.setVisible(False)  # Masquer le label au départ
         self.line_edite_quantite = QtWidgets.QLineEdit(self.product_window)
         self.line_edite_quantite.setPlaceholderText("Quantité minimale")
         self.line_edite_quantite.setGeometry(
              int(W * 0.72), int(H * 0.20),
+             int(W * 0.20), int(H * 0.10))  
+        self.line_edite_quantite.setVisible(False)  # Masquer le QLineEdit au départ  
+
+        self.label_fournisseur = QtWidgets.QLabel("Fournisseur", self.product_window)
+        self.label_fournisseur.setGeometry(
+             int(W * 0.05), int(H * 0.35),
+             int(W * 0.20), int(H * 0.10))   
+        self.label_fournisseur.setVisible(False)  # Masquer le label au départ
+        self.line_edite_fournisseur = QtWidgets.QComboBox(self.product_window)
+        self.line_edite_fournisseur.setPlaceholderText("Fournisseur")
+        self.line_edite_fournisseur.setGeometry(
+             int(W * 0.20), int(H * 0.35),
+             int(W * 0.30), int(H * 0.10))
+        self.line_edite_fournisseur.setVisible(False)  # Masquer le QLineEdit au départ
+
+        self.lable_categorie_produit = QtWidgets.QLabel("Catégorie de produit",self.product_window)
+        self.lable_categorie_produit.setGeometry(
+             int(W * 0.52), int(H * 0.35),
              int(W * 0.20), int(H * 0.10))
+        self.lable_categorie_produit.setVisible(False)
+        self.choix_categorie = QtWidgets.QComboBox(self.product_window)
+        self.choix_categorie.setGeometry(
+             int(W * 0.72), int(H * 0.35),
+             int(W * 0.25), int(H * 0.10)           
+        )
+        self.choix_categorie.addItems(["","Tissu","Fil à coudre","Boton","Fermeture éclair","Doublure","Élastique","Accessoires","Emballage","Autre" ])
+        self.choix_categorie.setVisible(False)
+
+        self.lable_color_produit = QtWidgets.QLabel(self.product_window)
+        self.lable_color_produit.setGeometry(
+          int 
+        )
+
+        
 
         self.product_window.show()
+
+
+    def choice_product(self, H, W):
+        selected_product = self.choix_produit.currentText()
+        if selected_product == "Matière première":
+               self.label_nom_produit.setVisible(True)  # Afficher le label
+               self.line_edite_nom.setVisible(True)  # Afficher le QLineEdit
+               self.quintite_label.setVisible(True)  # Afficher le label
+               self.line_edite_quantite.setVisible(True)  # Afficher le QLineEdit
+               self.label_fournisseur.setVisible(True)  # Afficher le label
+               self.line_edite_fournisseur.setVisible(True)  # Afficher le QLine
+               self.lable_categorie_produit.setVisible(True)
+               self.choix_categorie.setVisible(True)
+
+
+        elif selected_product == "Produit fini":
+            print("Produit fini selected")
