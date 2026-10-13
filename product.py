@@ -52,8 +52,8 @@ class Product(QtWidgets.QWidget):
         screen = QtWidgets.QApplication.primaryScreen()
         geometry = screen.availableGeometry()
 
-        W = int(geometry.width() * 0.50)
-        H = int(geometry.height() * 0.50)
+        W = int(geometry.width() * 0.70)
+        H = int(geometry.height() * 0.70)
 
         self.product_window.resize(W, H)
 
@@ -106,6 +106,14 @@ class Product(QtWidgets.QWidget):
         self.line_prix = QtWidgets.QLineEdit(self.product_window)
         self.line_prix.setPlaceholderText("DA")
         self.line_prix.setVisible(False)
+        
+        self.lable_date_achat = QtWidgets.QLabel("Date d'achat",self.product_window)
+        self.lable_date_achat.setVisible(False)
+        self.date_achat = QtWidgets.QDateEdit(self.product_window)
+        self.date_achat.setDisplayFormat("dd-MM-yyyy")
+        self.date_achat.setDate(QtCore.QDate.currentDate())
+        self.date_achat.setVisible(False)
+        
 
        # Code du produit
         self.labele_code_produit.setGeometry(
@@ -196,6 +204,15 @@ class Product(QtWidgets.QWidget):
     int(W * 0.78), int(H * 0.50),
     int(W * 0.17), int(H * 0.08)
 )
+# date d'achat
+        self.lable_date_achat.setGeometry(
+    int(W * 0.05), int(H * 0.65),
+    int(W * 0.15), int(H * 0.08)       
+        )
+        self.date_achat.setGeometry(
+    int(W * 0.22), int(H * 0.65),
+    int(W * 0.17), int(H * 0.08)            
+        )
     #============bouton==============
         self.bouton_add_produit = QtWidgets.QPushButton("Ajeuter produit",self.product_window)
         self.bouton_add_produit.setIcon(QtGui.QIcon("icons/add.png"))
@@ -228,6 +245,8 @@ class Product(QtWidgets.QWidget):
             self.line_quintite.setVisible(True)
             self.lable_prix.setVisible(True)
             self.line_prix.setVisible(True)
+            self.lable_date_achat.setVisible(True)
+            self.date_achat.setVisible(True)
 
 
         elif selected_product == "Produit fini":

@@ -97,7 +97,7 @@ QPushButton#add_button:disabled {
         border: 1px solid #B8C2CC;
         border-radius: 8px;
         padding: 8px 12px;
-        font-size: 18px;
+        font-size: 30px;
         color: #333333;
        }
 
@@ -250,5 +250,29 @@ QScrollBar::handle:horizontal {
         selection-color: #154360;
         border: 1px solid #B8C2CC;
         outline: 0;
+    }
+        QDateEdit {
+        background-color: white;
+        color: #2C3E50;
+        border: 1px solid #B8C2CC;
+        border-radius: 8px;
+        padding: 6px;
+        font-size: 38px;
+        min-height: 25px;
+    }
+
+    QDateEdit:hover {
+        border: 1px solid #3498DB;
+    }
+
+    QDateEdit:focus {
+        border: 1px solid #2980B9;
+    }
+
+    QDateEdit::drop-down {
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        width: 25px;
+        border-left: 1px solid #B8C2CC;
     }
     """)
