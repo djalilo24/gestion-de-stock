@@ -6,70 +6,130 @@ class Fournisseurs(QtWidgets.QWidget):
         self.fournisseur_ui()
 
     def fournisseur_ui(self):
-        FR = QtCore.QRegularExpression("[a-zA-Z]+")
-        validator_fr = QRegularExpressionValidator(FR, self)
-        AR = QtCore.QRegularExpression("[ء-ي ]*")
-        validator_ar = QRegularExpressionValidator(AR, self)
-        self.group_form_supplier = QtWidgets.QVBoxLayout(self)
-        self.title = QtWidgets.QLabel("Fournisseurs", self)
-        #========nom fournisseur=========
-        self.lable_nom = QtWidgets.QLabel("Nom du fournisseur", self)
-        self.nom = QtWidgets.QLineEdit()
-        self.nom.setPlaceholderText("Nom du fournisseur") 
-        self.nom.setValidator(validator_fr)
-        #========prénom fournisseur=========         
-        self.lable_prenom = QtWidgets.QLabel("Prénom du fournisseur", self)
-        self.prenom = QtWidgets.QLineEdit()
-        self.prenom.setPlaceholderText("Prénom du fournisseur") 
-        self.prenom.setValidator(validator_fr)
-        #========nom_ar fournisseur=========
-        self.lable_nom_ar = QtWidgets.QLabel("لقب المورد", self)
-        self.nom_ar = QtWidgets.QLineEdit()
-        self.nom_ar.setPlaceholderText("لقب المورد") 
-        self.nom_ar.setValidator(validator_ar)
-        #========prénom_ar fournisseur=========         
-        self.lable_prenom_ar = QtWidgets.QLabel("إسم المورد", self)
-        self.prenom_ar = QtWidgets.QLineEdit()
-        self.prenom_ar.setPlaceholderText("إسم المورد") 
-        self.prenom_ar.setValidator(validator_ar)
-        #========brithday=========  
-        self.lable_brithday = QtWidgets.QLabel("Date de naissance", self)
-        self.brithday = QtWidgets.QDateEdit(self)
-        self.brithday.setCalendarPopup(True)   
-        #========place=========  
-        self.lable_lieu_naissance = QtWidgets.QLabel("Lieu de naissance", self)   
-        self.lieu_naissance = QtWidgets.QLineEdit()
-        self.lieu_naissance.setPlaceholderText("Lieu de naissance")
-       
-        
-        self.group_form_supplier.addWidget(self.title)
-        self.group_form_supplier.addWidget(self.lable_nom)
-        self.group_form_supplier.addWidget(self.nom)
-        self.group_form_supplier.addWidget(self.lable_prenom)
-        self.group_form_supplier.addWidget(self.prenom)
-        self.group_form_supplier.addWidget(self.lable_nom_ar)
-        self.group_form_supplier.addWidget(self.nom_ar)
-        self.group_form_supplier.addWidget(self.lable_prenom_ar)
-        self.group_form_supplier.addWidget(self.prenom_ar)
-        self.group_form_supplier.addWidget(self.lable_brithday)
-        self.group_form_supplier.addWidget(self.brithday)
-        self.group_form_supplier.addWidget(self.lable_lieu_naissance)
-        self.group_form_supplier.addWidget(self.lieu_naissance)
-        
-    def resizeEvent(self, event):
-        w = self.width()
-        h = self.height()
-        self.title.setGeometry(int(w * 0.5), int(h * 0.002), int(w * 0.2), int(h * 0.1))  
-        self.lable_nom.setGeometry(int(w * 0.002), int(h * 0.07), int(w * 0.2), int(h * 0.1))
-        self.nom.setGeometry(int(w * 0.157), int(h * 0.099), int(w * 0.2), int(h * 0.06))
-        self.lable_prenom.setGeometry(int(w * 0.01), int(h * 0.15), int(w * 0.2), int(h * 0.1))
-        self.prenom.setGeometry(int(w * 0.157), int(h * 0.179), int(w * 0.2), int(h * 0.06))
-        self.lable_nom_ar.setGeometry(int(w * 0.48), int(h * 0.07), int(w * 0.2), int(h * 0.1))
-        self.nom_ar.setGeometry(int(w * 0.4), int(h * 0.099), int(w * 0.2), int(h * 0.06))
-        self.lable_prenom_ar.setGeometry(int(w * 0.48), int(h * 0.15), int(w * 0.2), int(h * 0.1))
-        self.prenom_ar.setGeometry(int(w * 0.4), int(h * 0.179), int(w * 0.2), int(h * 0.06))
-        self.lable_brithday.setGeometry(int(w * 0.68), int(h * 0.07), int(w * 0.15), int(h * 0.1))
-        self.brithday.setGeometry(int(w * 0.84), int(h * 0.099), int(w * 0.15), int(h * 0.06))
-        self.lable_lieu_naissance.setGeometry(int(w * 0.68), int(h * 0.15), int(w * 0.15), int(h * 0.1))
-        self.lieu_naissance.setGeometry(int(w * 0.84), int(h * 0.179), int(w * 0.15), int(h * 0.06))
-        super().resizeEvent(event)  
+        self.group_form_fournisseur = QtWidgets.QVBoxLayout(self)
+        #====================Bouton add product=========================
+        self.add_fournisseur_button = QtWidgets.QPushButton("Ajouter un fournisseur")   
+        self.add_fournisseur_button.setIcon(QtGui.QIcon("icons/add.png"))
+        self.add_fournisseur_button.setObjectName("add_button")
+        self.add_fournisseur_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.add_fournisseur_button.setToolTip("Ajouter un nouveau fournisseur")
+        self.add_fournisseur_button.setToolTipDuration(3000)  # Durée d'aff
+        self.add_fournisseur_button.setIconSize(QtCore.QSize(24, 24))
+        self.add_fournisseur_button.clicked.connect(self.form_fournisseur)
+        #====================title=========================
+        self.title_label = QtWidgets.QLabel("Liste des Fournisseurs")       
+        self.title_label.setObjectName("title_group")
+        #====================add widget =========================
+        self.group_box_table = QtWidgets.QGroupBox()
+        self.group_form_fournisseur.addWidget(self.group_box_table)
+        self.layout_table = QtWidgets.QVBoxLayout(self.group_box_table) 
+        self.headre_layout = QtWidgets.QHBoxLayout()
+        self.headre_layout.addWidget(self.title_label)
+        self.headre_layout.addStretch()  # Ajouter un espace flexible pour pousser le bouton vers la droite
+        self.headre_layout.addWidget(self.add_fournisseur_button)
+        self.layout_table.addLayout(self.headre_layout)
+        #====================table product=========================
+        self.table_fournisseur = QtWidgets.QTableWidget()
+        self.table_fournisseur.setRowCount(3)
+        self.table_fournisseur.setColumnCount(5)
+        self.table_fournisseur.setHorizontalHeaderLabels(["ID", "Nom", "Prix", "Quantité", "Description"])  
+        data = [
+           ["1", "Tissu coton", "Matière première", "150", "500"],
+           ["2", "Fil à coudre", "Matière première", "80", "120"],
+           ["3", "Chemise", "Produit fini", "25", "2500"]
+            ]   
+        for row, values in enumerate(data):
+           for col, value in enumerate(values):
+               self.table_fournisseur.setItem(row, col,QtWidgets.QTableWidgetItem(value))
+        self.table_fournisseur.horizontalHeader().setStretchLastSection(True)
+        self.table_fournisseur.setAlternatingRowColors(True) 
+        self.layout_table.addWidget(self.table_fournisseur)
+        #=========function form fournisseur===============
+    def form_fournisseur(self):
+        self.fournisseur_window = QtWidgets.QWidget()
+        self.fournisseur_window.setWindowTitle("Ajouter un produit")
+
+        screen = QtWidgets.QApplication.primaryScreen()
+        geometry = screen.availableGeometry()
+
+        W = int(geometry.width() * 0.70)
+        H = int(geometry.height() * 0.70)
+
+        self.fournisseur_window.resize(W, H)
+
+        self.lable_code_fournisseur = QtWidgets.QLabel("Code de fournisseur",self.fournisseur_window)
+        self.lable_code_fournisseur.setGeometry(
+                int(W * 0.05), int(H * 0.15),
+                int(W * 0.15), int(H * 0.08)
+        )
+        self.line_code_fournisseur = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_code_fournisseur.setEnabled(False)
+        self.line_code_fournisseur.setGeometry(
+                int(W * 0.20), int(H * 0.15),
+                int(W * 0.15), int(H * 0.08)            
+        )
+        self.lable_type_fournisseur = QtWidgets.QLabel("Type de fournisseur",self.fournisseur_window)
+        self.lable_type_fournisseur.setGeometry(
+                int(W * 0.36), int(H * 0.15),
+                int(W * 0.15), int(H * 0.08)             
+        )
+        self.choix_type_fournisseur = QtWidgets.QComboBox(self.fournisseur_window)
+        self.choix_type_fournisseur.addItems(["","Personne morale","Personne physique"])
+        self.choix_type_fournisseur.currentIndexChanged.connect(lambda :self.type_fournisseur())
+        self.choix_type_fournisseur.setGeometry(
+                int(W * 0.49), int(H * 0.15),
+                int(W * 0.17), int(H * 0.08)           
+        )
+        self.lable_type_societe = QtWidgets.QLabel("Nom societé",self.fournisseur_window)
+        self.lable_type_societe.setGeometry(
+                int(W * 0.66), int(H * 0.15),
+                int(W * 0.17), int(H * 0.08)             
+        )
+        self.choix_type_societe = QtWidgets.QComboBox(self.fournisseur_window)
+        self.choix_type_societe.addItems(["","EURL","SARL","SPA","SNC","AUTRE"])
+        self.choix_type_societe.setEnabled(False)
+        self.choix_type_societe.setGeometry(
+                int(W * 0.76), int(H * 0.15),
+                int(W * 0.09), int(H * 0.08)          
+        )
+        self.lable_nom_societe = QtWidgets.QLabel("Nom societe",self.fournisseur_window)
+        self.lable_nom_societe.setGeometry(
+                int(W * 0.13), int(H * 0.30),
+                int(W * 0.11), int(H * 0.08)            
+        )
+        self.line_nom_societe = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_nom_societe.setEnabled(False)
+        self.line_nom_societe.setGeometry(
+                int(W * 0.23), int(H * 0.30),
+                int(W * 0.25), int(H * 0.08)            
+        )
+        self.lable_add_societe = QtWidgets.QLabel("Address societe",self.fournisseur_window)
+        self.lable_add_societe.setGeometry(
+                int(W * 0.49), int(H * 0.30),
+                int(W * 0.11), int(H * 0.08)
+        )
+        self.line_add_societe = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_add_societe.setEnabled(False)
+        self.line_add_societe.setGeometry(
+                int(W * 0.60), int(H * 0.30),
+                int(W * 0.25), int(H * 0.08)
+        )
+
+
+
+        self.fournisseur_window.show()
+
+
+    def type_fournisseur(self):
+        type_fournisseur = self.choix_type_fournisseur.currentText()
+        if type_fournisseur=="Personne physique":
+           self.choix_type_societe.setEnabled(True)
+           self.line_nom_societe.setEnabled(True)
+           self.line_add_societe.setEnabled(True)
+        else:
+           self.choix_type_societe.setEnabled(False)
+           self.line_nom_societe.setEnabled(False)
+           self.line_add_societe.setEnabled(False)
+           self.choix_type_societe.clear()
+           self.line_nom_societe.clear()
+           self.line_add_societe.clear()
