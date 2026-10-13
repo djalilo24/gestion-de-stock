@@ -1,0 +1,112 @@
+-- 1. الممونون
+CREATE TABLE fournisseur (
+    id_fournisseur INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    telephone VARCHAR(30),
+    adresse VARCHAR(255)
+);
+
+-- 2. الزبائن
+CREATE TABLE client (
+    id_client INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    telephone VARCHAR(30),
+    adresse VARCHAR(255),
+    type_client ENUM('gros', 'detail') DEFAULT 'detail'
+);
+
+-- 3. المنتجات
+CREATE TABLE produit (
+    id_produit INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    type_produit ENUM(
+        'matiere_premiere',
+        'produit_fini'
+    ) NOT NULL,
+    unite VARCHAR(30) NOT NULL,
+    seuil_alerte DECIMAL(12,3) DEFAULT 0
+);
+
+-- 4. المخزون: مخزن واحد
+CREATE TABLE stock (
+    id_produit INT PRIMARY KEY,
+    quantite DECIMAL(12,3) NOT NULL DEFAULT 0,
+    FOREIGN KEY (id_produit)
+        REFERENCES produit(id_produit),
+    CHECK (quantite >= 0)
+);
+
+-- 5. فواتير الشراء
+CREATE TABLE achat (
+    id_achat INT AUTO_INCREMENT PRIMARY KEY,
+    id_fournisseur INT NOT NULL,
+    numero_facture VARCHAR(80),
+    date_achat DATE NOT NULL,
+    FOREIGN KEY (id_fournisseur)
+        REFERENCES fournisseur(id_fournisseur)
+);
+
+-- 6. تفاصيل الشراء
+CREATE TABLE ligne_achat (
+    id_ligne_achat INT AUTO_INCREMENT PRIMARY KEY,
+    id_achat INT NOT NULL,
+    id_produit INT NOT NULL,
+    quantite DECIMAL(12,3) NOT NULL,
+    prix_unitaire DECIMAL(12,2) NOT NULL,
+    FOREIGN KEY (id_achat)
+        REFERENCES achat(id_achat),
+    FOREIGN KEY (id_produit)
+        REFERENCES produit(id_produit),
+    CHECK (quantite > 0),
+    CHECK (prix_unitaire >= 0)
+);
+
+-- 7. عمليات الإنتاج
+CREATE TABLE production (
+    id_production INT AUTO_INCREMENT PRIMARY KEY,
+    id_produit_fini INT NOT NULL,
+    date_production DATE NOT NULL,
+    quantite_produite DECIMAL(12,3) NOT NULL,
+    FOREIGN KEY (id_produit_fini)
+        REFERENCES produit(id_produit),
+    CHECK (quantite_produite > 0)
+);
+
+-- 8. المواد المستهلكة في الإنتاج
+CREATE TABLE consommation (
+    id_consommation INT AUTO_INCREMENT PRIMARY KEY,
+    id_production INT NOT NULL,
+    id_matiere INT NOT NULL,
+    quantite_consommee DECIMAL(12,3) NOT NULL,
+    FOREIGN KEY (id_production)
+        REFERENCES production(id_production),
+    FOREIGN KEY (id_matiere)
+        REFERENCES produit(id_produit),
+    CHECK (quantite_consommee > 0)
+);
+
+-- 9. فواتير البيع
+CREATE TABLE vente (
+    id_vente INT AUTO_INCREMENT PRIMARY KEY,
+    id_client INT NOT NULL,
+    numero_facture VARCHAR(80) NOT NULL UNIQUE,
+    date_vente DATE NOT NULL,
+    type_vente ENUM('gros', 'detail') NOT NULL,
+    FOREIGN KEY (id_client)
+        REFERENCES client(id_client)
+);
+
+-- 10. تفاصيل البيع
+CREATE TABLE ligne_vente (
+    id_ligne_vente INT AUTO_INCREMENT PRIMARY KEY,
+    id_vente INT NOT NULL,
+    id_produit INT NOT NULL,
+    quantite DECIMAL(12,3) NOT NULL,
+    prix_unitaire DECIMAL(12,2) NOT NULL,
+    FOREIGN KEY (id_vente)
+        REFERENCES vente(id_vente),
+    FOREIGN KEY (id_produit)
+        REFERENCES produit(id_produit),
+    CHECK (quantite > 0),
+    CHECK (prix_unitaire >= 0)
+);
