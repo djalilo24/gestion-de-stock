@@ -80,7 +80,7 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.49), int(H * 0.15),
                 int(W * 0.17), int(H * 0.08)           
         )
-        self.lable_type_societe = QtWidgets.QLabel("Nom societé",self.fournisseur_window)
+        self.lable_type_societe = QtWidgets.QLabel("Genre societé",self.fournisseur_window)
         self.lable_type_societe.setGeometry(
                 int(W * 0.66), int(H * 0.15),
                 int(W * 0.17), int(H * 0.08)             
@@ -114,8 +114,64 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.60), int(H * 0.30),
                 int(W * 0.25), int(H * 0.08)
         )
-
-
+        self.lable_nom = QtWidgets.QLabel("Nom de fournisseur",self.fournisseur_window)
+        self.lable_nom.setGeometry(
+                int(W * 0.05), int(H * 0.45),
+                int(W * 0.15), int(H * 0.08)                
+        )
+        self.line_nom = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_nom.setPlaceholderText("Nom de fournissseur")
+        self.line_nom.setGeometry(
+                int(W * 0.19), int(H * 0.45),
+                int(W * 0.18), int(H * 0.08)                  
+        )
+        
+        self.lable_prenom = QtWidgets.QLabel("Nom de fournisseur",self.fournisseur_window)
+        self.lable_prenom.setGeometry(
+                int(W * 0.38), int(H * 0.45),
+                int(W * 0.15), int(H * 0.08)                
+        )
+        self.lable_prenom = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.lable_prenom.setPlaceholderText("Prenom de fournissseur")
+        self.lable_prenom.setGeometry(
+                int(W * 0.52), int(H * 0.45),
+                int(W * 0.18), int(H * 0.08)                  
+        )
+        self.lable_date_naissance = QtWidgets.QLabel("Date de naissance",self.fournisseur_window)
+        self.lable_date_naissance.setGeometry(
+                int(W * 0.70), int(H * 0.45),
+                int(W * 0.15), int(H * 0.08)                
+        )  
+        self.date_naissance = QtWidgets.QDateEdit(self.fournisseur_window)  
+        self.date_naissance.setDate(QtCore.QDate.currentDate())   
+        self.date_naissance.setGeometry(
+                int(W * 0.83), int(H * 0.45),
+                int(W * 0.15), int(H * 0.08)                  
+        )
+        self.nin_lable = QtWidgets.QLabel("Numéro identifiant nationale(NIN)",self.fournisseur_window)
+        self.nin_lable.setGeometry(
+                int(W * 0.05), int(H * 0.60),
+                int(W * 0.25), int(H * 0.08)                 
+        )
+        self.line_nin = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_nin.setPlaceholderText("NIN")
+        self.line_nin.setValidator(QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[0-9]{0,18}")))
+        self.line_nin.setGeometry(
+                int(W * 0.28), int(H * 0.60),
+                int(W * 0.20), int(H * 0.08)  
+        )
+        self.lable_nif =QtWidgets.QLabel("Numéro identifiant fiscale(NIF)",self.fournisseur_window)
+        self.lable_nif.setGeometry(
+                int(W * 0.53), int(H * 0.60),
+                int(W * 0.25), int(H * 0.08)                
+        )
+        self.line_nif = QtWidgets.QLineEdit(self.fournisseur_window)
+        self.line_nif.setPlaceholderText("NIF")
+        self.line_nif.setValidator(QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[0-9]{0,20}")))
+        self.line_nif.setGeometry(
+                int(W * 0.73), int(H * 0.60),
+                int(W * 0.22), int(H * 0.08)  
+        )
 
         self.fournisseur_window.show()
 
@@ -130,6 +186,6 @@ class Fournisseurs(QtWidgets.QWidget):
            self.choix_type_societe.setEnabled(False)
            self.line_nom_societe.setEnabled(False)
            self.line_add_societe.setEnabled(False)
-           self.choix_type_societe.clear()
+           self.choix_type_societe.setCurrentIndex(0)
            self.line_nom_societe.clear()
            self.line_add_societe.clear()
