@@ -1,6 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtCore import QDate
+from PyQt5.QtWidgets import QMessageBox
+import mysql.connector
+from mysql.connector import Error
 class Fournisseurs(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -119,7 +122,7 @@ class Fournisseurs(QtWidgets.QWidget):
         
         self.lable_prenom = QtWidgets.QLabel("Prenom de fournisseur",self.fournisseur_window)
         self.lable_prenom.setGeometry(
-                int(W * 0.38), int(H * 0.45),
+                int(W * 0.37), int(H * 0.45),
                 int(W * 0.15), int(H * 0.08)                
         )
         self.line_prenom = QtWidgets.QLineEdit(self.fournisseur_window)
@@ -224,22 +227,59 @@ class Fournisseurs(QtWidgets.QWidget):
             nif = self.line_nif.text().strip()
             adresse = self.line_add.text().strip()
             telephone = self.line_tel.text().strip()
-            self.verify(nin,nif,date_naissance)
-            
+            result = self.verify(nin,nif,date_naissance)
+            if result[0]==False:
+                QMessageBox.warning(self,"Erreur de validation",str(result[1]+"\n"+result[2]+"\n"+result[3]))  
+            else:
+                db = None
+                sql = None
+                
+                try:
+                   print("Tentative de connexion...", flush=True)
+                   db = mysql.connector.connect(
+                           host="127.0.0.1",
+                           port=3306,
+                           user="root",
+                           password="guelma24@",
+                           database="nakhla",
+                           connection_timeout=5)
+                   print("Connexion établie", flush=True)
+                   if db.is_connected():
+                      print("Connexion MySQL réussie", flush=True)
+                      sql = db.cursor()
+
+        
+
+                except Error as e:
+                    print("Erreur :", repr(e), flush=True)
+
+                finally:
+                   if sql is not None:
+                      sql.close()
+
+                   if db is not None and db.is_connected():
+                      db.close()
+                      print("Connexion MySQL fermée", flush=True)          
 #=============function verify value=============
     def verify(self,nin,nif,date_naissance):
-        msg=""
+        msg1="" 
+        msg2=""
+        msg3=""
         if nin:
            if len(nin)!=18:
-              msg="Vérifier numéro identifiant nationale(NIN)"
+              msg1="Vérifier numéro identifiant nationale(NIN)"
         if nif:      
            if len(nif)!=12 or len(nif)!=20 :
-              msg=msg+","+"Vérifier numéro identifiant fiscale(NIF)"    
+              msg2="Vérifier numéro identifiant fiscale(NIF)"    
         if date_naissance:
              date_naissance = self.date_naissance.date()
              if date_naissance >= QDate.currentDate():
-               msg=msg+","+"La date de naissance est invalide"
-               print(msg)
+               msg3="La date de naissance est invalide"
+        if msg1 or msg2 or msg3:
+           return False,msg1,msg2,msg3
+        else:
+                return True,"","",""
+        
                 
          
            
