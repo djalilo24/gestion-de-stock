@@ -1,7 +1,14 @@
 -- 1. الممونون
 CREATE TABLE fournisseur (
     id_fournisseur INT AUTO_INCREMENT PRIMARY KEY,
+    type_fournisseur ENUM('Personne morale','Personne physique'),
+    genre_fournisseur VARCHAR(10),
+    nom_societe VARCHAR(150),
     nom VARCHAR(150) NOT NULL,
+    prenom VARCHAR(150) NOT NULL,
+    date_naissance DATE,
+    nin INT ,
+    nif INT ,
     telephone VARCHAR(30),
     adresse VARCHAR(255)
 );

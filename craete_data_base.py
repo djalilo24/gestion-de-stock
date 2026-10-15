@@ -9,7 +9,7 @@ try:
     db = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="alilomoh24021989@"
+        password="guelma24@"
     )
 
     print("Connexion MySQL réussie")
