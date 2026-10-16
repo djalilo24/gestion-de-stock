@@ -7,8 +7,8 @@ CREATE TABLE fournisseur (
     nom VARCHAR(150) NOT NULL,
     prenom VARCHAR(150) NOT NULL,
     date_naissance DATE,
-    nin INT ,
-    nif INT ,
+    nin VARCHAR(18) ,
+    nif VARCHAR(20) ,
     telephone VARCHAR(30),
     adresse VARCHAR(255)
 );

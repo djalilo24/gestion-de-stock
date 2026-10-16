@@ -3,7 +3,7 @@ from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QMessageBox
 import mysql.connector
-from mysql.connector import Error
+import traceback
 class Fournisseurs(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -34,15 +34,12 @@ class Fournisseurs(QtWidgets.QWidget):
         self.layout_table.addLayout(self.headre_layout)
         #====================table product=========================
         self.table_fournisseur = QtWidgets.QTableWidget()
-        self.table_fournisseur.setRowCount(3)
-        self.table_fournisseur.setColumnCount(5)
-        self.table_fournisseur.setHorizontalHeaderLabels(["ID", "Nom", "Prix", "Quantité", "Description"])  
-        data = [
-           ["1", "Tissu coton", "Matière première", "150", "500"],
-           ["2", "Fil à coudre", "Matière première", "80", "120"],
-           ["3", "Chemise", "Produit fini", "25", "2500"]
-            ]   
-        for row, values in enumerate(data):
+        self.table_fournisseur.setColumnCount(4)
+        all_fournisseur = self.recovry_all_fournisseur()
+        self.table_fournisseur.setRowCount(len(all_fournisseur))
+        self.table_fournisseur.setHorizontalHeaderLabels(["ID","Type fournisseur","Nom et Prenom", "Telephone"])  
+ 
+        for row, values in enumerate(all_fournisseur):
            for col, value in enumerate(values):
                self.table_fournisseur.setItem(row, col,QtWidgets.QTableWidgetItem(value))
         self.table_fournisseur.horizontalHeader().setStretchLastSection(True)
@@ -72,6 +69,7 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.20), int(H * 0.15),
                 int(W * 0.15), int(H * 0.08)            
         )
+        self.line_code_fournisseur.setText("#"+str(int(self.recovry_id_fournisseur())+1))
         self.lable_type_fournisseur = QtWidgets.QLabel("Type de fournisseur",self.fournisseur_window)
         self.lable_type_fournisseur.setGeometry(
                 int(W * 0.36), int(H * 0.15),
@@ -216,7 +214,7 @@ class Fournisseurs(QtWidgets.QWidget):
            self.line_nom_societe.clear()
 #============function add supplier in database==================
     def add_fournisseur(self):
-            id_fournisseur = self.line_code_fournisseur
+            id_fournisseur = int((self.line_code_fournisseur.text().strip()).split("#")[-1])
             type_fournisseur = self.choix_type_fournisseur.currentText().strip()
             genre_fournisseur = self.choix_type_societe.currentText().strip()
             nom_societe = self.line_nom_societe.text().strip()
@@ -231,35 +229,28 @@ class Fournisseurs(QtWidgets.QWidget):
             if result[0]==False:
                 QMessageBox.warning(self,"Erreur de validation",str(result[1]+"\n"+result[2]+"\n"+result[3]))  
             else:
-                db = None
-                sql = None
-                
                 try:
-                   print("Tentative de connexion...", flush=True)
-                   db = mysql.connector.connect(
-                           host="127.0.0.1",
-                           port=3306,
-                           user="root",
-                           password="guelma24@",
-                           database="nakhla",
-                           connection_timeout=5)
-                   print("Connexion établie", flush=True)
-                   if db.is_connected():
-                      print("Connexion MySQL réussie", flush=True)
-                      sql = db.cursor()
-
-        
-
-                except Error as e:
-                    print("Erreur :", repr(e), flush=True)
-
+                   conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="alilomoh24021989@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+                   cursor = conn.cursor()
+                   sql_insert =("""INSERT INTO fournisseur(id_fournisseur,type_fournisseur,genre_fournisseur,nom_societe,nom,prenom,date_naissance,nin,nif,telephone,adresse)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)""")
+                   data =(id_fournisseur,type_fournisseur,genre_fournisseur,nom_societe,nom,prenom,date_naissance,nin,nif,telephone,adresse)
+                   cursor.execute(sql_insert,data)
+                   conn.commit()
+                   QMessageBox.information(None,"Information","Le fournisseur a été ajouté avec succès.")
+                except mysql.connector.Error as err:
+                       QMessageBox.critical( None,"Erreur",f"Une erreur est survenue lors de l'ajout du fournisseur :\n{err}")
                 finally:
-                   if sql is not None:
-                      sql.close()
-
-                   if db is not None and db.is_connected():
-                      db.close()
-                      print("Connexion MySQL fermée", flush=True)          
+                     if conn.is_connected():
+                       #cursor.close()
+                       conn.close()    
+                                
 #=============function verify value=============
     def verify(self,nin,nif,date_naissance):
         msg1="" 
@@ -269,7 +260,7 @@ class Fournisseurs(QtWidgets.QWidget):
            if len(nin)!=18:
               msg1="Vérifier numéro identifiant nationale(NIN)"
         if nif:      
-           if len(nif)!=12 or len(nif)!=20 :
+           if len(nif) not in (12,20) :
               msg2="Vérifier numéro identifiant fiscale(NIF)"    
         if date_naissance:
              date_naissance = self.date_naissance.date()
@@ -279,7 +270,47 @@ class Fournisseurs(QtWidgets.QWidget):
            return False,msg1,msg2,msg3
         else:
                 return True,"","",""
-        
+#=============function recovry id_fournisseur=============  
+    def recovry_id_fournisseur(self):
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="alilomoh24021989@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM fournisseur ")
+            reslt = cursor.fetchone()
+            return reslt[0] 
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close() 
+#=============function recovry  all fournisseur=============  
+    def recovry_all_fournisseur(self):
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="alilomoh24021989@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM fournisseur ")
+            reslt = cursor.fetchall()
+            return reslt 
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close()   
+           
                 
          
            

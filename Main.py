@@ -5,6 +5,8 @@ from form_supplier import Fournisseurs
 from product import Product
 from from_home import Home
 from PyQt5.QtWidgets import QWidget
+import mysql.connector
+import traceback
 class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
