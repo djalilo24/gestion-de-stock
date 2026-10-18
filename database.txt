@@ -10,7 +10,8 @@ CREATE TABLE fournisseur (
     nin VARCHAR(18) ,
     nif VARCHAR(20) ,
     telephone VARCHAR(30),
-    adresse VARCHAR(255)
+    adresse VARCHAR(255),
+    ETES TINYINT(1) DEFAULT 1
 );
 
 -- 2. الزبائن
