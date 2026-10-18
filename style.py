@@ -1,7 +1,7 @@
 def use_style(app):
            app.setStyleSheet("""
             QWidget {
-                background-color: #3E6DEDC;
+                background-color: #E4E8F2;
                 font-family: 'Sakkal Majalla';
             }
             
@@ -154,7 +154,6 @@ QDateEdit {
 }
 QTableWidget {
     background-color: #FFFFFF;
-    alternate-background-color: #F4F7FB;
     color: #2C3E50;
     border: 1px solid #D6DEE8;
     border-radius: 8px;
@@ -274,5 +273,21 @@ QScrollBar::handle:horizontal {
         subcontrol-position: top right;
         width: 25px;
         border-left: 1px solid #B8C2CC;
+    }
+        QPushButton#btn_active {
+        background-color: #27AE60;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-size: 24px;
+    }
+
+    QPushButton#btn_active:checked {
+        background-color: #27F542;
+    }
+
+    QPushButton#btn_active:!checked {
+        background-color: #E74C3C;
     }
     """)

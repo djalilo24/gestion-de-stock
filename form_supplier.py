@@ -34,16 +34,26 @@ class Fournisseurs(QtWidgets.QWidget):
         self.layout_table.addLayout(self.headre_layout)
         #====================table product=========================
         self.table_fournisseur = QtWidgets.QTableWidget()
-        self.table_fournisseur.setColumnCount(4)
+        self.table_fournisseur.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.table_fournisseur.setColumnCount(5)
         all_fournisseur = self.recovry_all_fournisseur()
         self.table_fournisseur.setRowCount(len(all_fournisseur))
-        self.table_fournisseur.setHorizontalHeaderLabels(["ID","Type fournisseur","Nom et Prenom", "Telephone"])  
- 
+        self.table_fournisseur.setHorizontalHeaderLabels(["ID","Type fournisseur","Nom et Prenom", "Telephone","Nom societe"])  
         for row, values in enumerate(all_fournisseur):
-           for col, value in enumerate(values):
-               self.table_fournisseur.setItem(row, col,QtWidgets.QTableWidgetItem(value))
+           if values[5]==1:
+               color=QtGui.QColor("#90EE90")
+           else:
+               color=QtGui.QColor("#FFC8C8")  
+           print(color) 
+           for col in range(5):
+                value = values[col]
+                item = QtWidgets.QTableWidgetItem("" if value is None else str(value))   
+                item.setBackground(QtGui.QBrush(color))
+                self.table_fournisseur.setItem(row, col,item)
+                self.table_fournisseur.resizeColumnsToContents()
+                print(item.background().color().name())
         self.table_fournisseur.horizontalHeader().setStretchLastSection(True)
-        self.table_fournisseur.setAlternatingRowColors(True) 
+        self.table_fournisseur.setAlternatingRowColors(False) 
         self.layout_table.addWidget(self.table_fournisseur)
         #=========function form fournisseur===============
     def form_fournisseur(self):
@@ -186,6 +196,11 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.66), int(H * 0.70),
                 int(W * 0.15), int(H * 0.08)
         )
+        self.lable_etes = QtWidgets.QLabel("Etes de fournisseur")
+        self.lable_etes.setGeometry(
+                int(W * 0.20), int(H * 0.82),
+                int(W * 0.15), int(H * 0.08)                
+        )
 
     #============bouton==============
         self.bouton_add_fournisseur = QtWidgets.QPushButton("Ajeuter fournisseur",self.fournisseur_window)
@@ -196,8 +211,16 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.28), int(H * 0.12)
         ) 
         self.bouton_add_fournisseur.clicked.connect(self.add_fournisseur) 
-    
-
+        self.btn_active = QtWidgets.QPushButton("ACTIVE",self.fournisseur_window)
+        self.btn_active.setObjectName("btn_active")
+        self.btn_active.setCheckable(True)
+        self.btn_active.setChecked(True)
+        self.btn_active.setVisible(False)
+        self.btn_active.setGeometry(
+                int(W * 0.20), int(H * 0.82),
+                int(W * 0.28), int(H * 0.12)           
+        )
+        self.btn_active.toggled.connect(lambda checked: self.btn_active.setText("ACTIVE" if checked else "ARRETER"))
         
         self.fournisseur_window.show()
 #============function active societe===================
@@ -281,7 +304,7 @@ class Fournisseurs(QtWidgets.QWidget):
                      connection_timeout=10,
                      use_pure=True  ) 
             cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM fournisseur ")
+            cursor.execute("SELECT MAX(id_fournisseur) FROM fournisseur ")
             reslt = cursor.fetchone()
             return reslt[0] 
         except mysql.connector.Error as err:
@@ -301,7 +324,7 @@ class Fournisseurs(QtWidgets.QWidget):
                      connection_timeout=10,
                      use_pure=True  ) 
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM fournisseur ")
+            cursor.execute("SELECT CONCAT('#', id_fournisseur),type_fournisseur,CONCAT(nom, ' ', prenom),telephone,nom_societe,ETES FROM fournisseur ")
             reslt = cursor.fetchall()
             return reslt 
         except mysql.connector.Error as err:
@@ -311,6 +334,7 @@ class Fournisseurs(QtWidgets.QWidget):
                    #cursor.close()
                    conn.close()   
            
-                
+
+           
          
            
