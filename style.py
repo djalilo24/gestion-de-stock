@@ -152,67 +152,41 @@ QDateEdit {
     font-size: 25px;
     padding: 6px;
 }
-QTableWidget {
-    background-color: #FFFFFF;
-    color: #2C3E50;
-    border: 1px solid #D6DEE8;
-    border-radius: 8px;
-    gridline-color: #E3E8EF;
-    font-size: 28px;
-    selection-background-color: #D6E4F0;
-    selection-color: #1A5276;
+            QTableWidget {
+    background-color: #e0e0d1;
+    gridline-color: #999;
+    font-size: 30px;
+    font-family: 'Sakkal Majalla';
+    border: 2px solid #d1d9e6;
+    border-radius: 10px;
 }
 
 QTableWidget::item {
-    padding: 8px;
-    border: none;
+    padding: 6px;
 }
 
 QTableWidget::item:selected {
-    background-color: #D6E4F0;
-    color: #1A5276;
+    background-color: #1e90ff;
+    color: white;
+}
+
+QTableView {
+    background-color: #e0e0d1;
+}
+
+QTableView::item {
+    padding: 6px;
 }
 
 QHeaderView::section {
-    background-color: #34495E;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-right: 1px solid #526578;
-    font-size: 30px;
+    background-color: #E6FFE6;
+    color: black;
+    font-size: 28px;
     font-weight: bold;
-}
-
-QTableCornerButton::section {
-    background-color: #34495E;
+    padding: 6px;
     border: none;
-}
-
-QScrollBar:vertical {
-    background-color: #F4F7FB;
-    width: 10px;
-    margin: 0px;
-}
-
-QScrollBar::handle:vertical {
-    background-color: #B8C2CC;
-    min-height: 25px;
-    border-radius: 5px;
-}
-
-QScrollBar::handle:vertical:hover {
-    background-color: #7F8C8D;
-}
-
-QScrollBar:horizontal {
-    background-color: #F4F7FB;
-    height: 10px;
-}
-
-QScrollBar::handle:horizontal {
-    background-color: #B8C2CC;
-    min-width: 25px;
-    border-radius: 5px;
+    border-right: 2px solid #999999;   /* خط فاصل عمودي */
+    border-bottom: 2px solid #999999;  /* خط فاصل أفقي */
 }
     QComboBox {
         background-color: white;
@@ -290,4 +264,34 @@ QScrollBar::handle:horizontal {
     QPushButton#btn_active:!checked {
         background-color: #E74C3C;
     }
+    QMenu {
+    background-color: #FFFFFF;
+    color: #2C3E50;
+    border: 1px solid #DCE3EB;
+    border-radius: 8px;
+    padding: 5px;
+    font-family: 'Sakkal Majalla';
+    font-size: 20px;
+}
+
+QMenu::item {
+    padding: 8px 25px;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+QMenu::item:selected {
+    background-color: #3498DB;
+    color: #FFFFFF;
+}
+
+QMenu::item:disabled {
+    color: #BDC3C7;
+}
+
+QMenu::separator {
+    height: 1px;
+    background-color: #E5EAF0;
+    margin: 5px 8px;
+}
     """)

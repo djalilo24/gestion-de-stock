@@ -44,19 +44,22 @@ class Fournisseurs(QtWidgets.QWidget):
                color=QtGui.QColor("#90EE90")
            else:
                color=QtGui.QColor("#FFC8C8")  
-           print(color) 
            for col in range(5):
                 value = values[col]
                 item = QtWidgets.QTableWidgetItem("" if value is None else str(value))   
-                item.setBackground(QtGui.QBrush(color))
+                item.setBackground(color)
                 self.table_fournisseur.setItem(row, col,item)
                 self.table_fournisseur.resizeColumnsToContents()
-                print(item.background().color().name())
         self.table_fournisseur.horizontalHeader().setStretchLastSection(True)
         self.table_fournisseur.setAlternatingRowColors(False) 
+        self.table_fournisseur.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.table_fournisseur.customContextMenuRequested.connect(self.show_list_menu)
         self.layout_table.addWidget(self.table_fournisseur)
         #=========function form fournisseur===============
-    def form_fournisseur(self):
+    data_fournisseur = None
+    def form_fournisseur(self,data_fournisseur):
+      print("data=",data_fournisseur)
+      if not data_fournisseur:
         self.fournisseur_window = QtWidgets.QWidget()
         self.fournisseur_window.setWindowTitle("Ajouter un produit")
 
@@ -221,6 +224,7 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.28), int(H * 0.12)           
         )
         self.btn_active.toggled.connect(lambda checked: self.btn_active.setText("ACTIVE" if checked else "ARRETER"))
+      
         
         self.fournisseur_window.show()
 #============function active societe===================
@@ -256,7 +260,7 @@ class Fournisseurs(QtWidgets.QWidget):
                    conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -299,7 +303,7 @@ class Fournisseurs(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -313,13 +317,13 @@ class Fournisseurs(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.close()
                    conn.close() 
-#=============function recovry  all fournisseur=============  
+#-----------------------------------------
     def recovry_all_fournisseur(self):
         try:
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -333,7 +337,57 @@ class Fournisseurs(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.close()
                    conn.close()   
-           
+#..........................function menu liste........................................
+    def show_list_menu(self, pos):
+        index = self.table_fournisseur.indexAt(pos)
+        if not index.isValid():
+           return
+        row = index.row()
+        self.table_fournisseur.selectRow(row)  
+        menu = QtWidgets.QMenu(self.table_fournisseur)
+        action_edit = menu.addAction("Modifier les informations")
+        action = menu.exec_(self.table_fournisseur.viewport().mapToGlobal(pos))
+        if action == action_edit:
+           self.modify_op()
+#..........................recovery fournisseur........................................
+    def modify_op(self):       
+        row_count = self.table_fournisseur.currentRow()
+        id_f = (self.table_fournisseur.item(row_count, 0).text()).split("#")[-1]
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM fournisseur where id_fournisseur=%s",(int(id_f),))
+            reslt= cursor.fetchall()
+            self.form_fournisseur(reslt)
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close() 
+#..........................update fournisseur........................................  
+    def update_fournisseyr(self,reslt):
+        self.line_code_fournisseur.text().strip().split("#")[-1]
+        self.choix_type_fournisseur.currentText().strip()
+        self.choix_type_societe.currentText().strip()
+        self.line_nom_societe.text().strip()
+        self.line_nom.text().strip()
+        self.line_prenom.text().strip()
+        self.date_naissance.date().toString("yyyy-MM-dd")
+        self.line_nin.text().strip()
+        self.line_nif.text().strip()
+        self.line_add.text().strip()
+        self.line_tel.text().strip()
+        result = self.verify(nin,nif,date_naissance)  
+         
+            
+            
 
            
          
