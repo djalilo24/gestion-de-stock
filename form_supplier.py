@@ -55,13 +55,12 @@ class Fournisseurs(QtWidgets.QWidget):
         self.table_fournisseur.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.table_fournisseur.customContextMenuRequested.connect(self.show_list_menu)
         self.layout_table.addWidget(self.table_fournisseur)
-        #=========function form fournisseur===============
-    data_fournisseur = None
-    def form_fournisseur(self,data_fournisseur):
-      print("data=",data_fournisseur)
-      if not data_fournisseur:
+
+#=========function form fournisseur===============
+    reslt=None
+    def form_fournisseur(self,reslt):
         self.fournisseur_window = QtWidgets.QWidget()
-        self.fournisseur_window.setWindowTitle("Ajouter un produit")
+        self.fournisseur_window.setWindowTitle("FOURNISSEUR")
 
         screen = QtWidgets.QApplication.primaryScreen()
         geometry = screen.availableGeometry()
@@ -82,7 +81,6 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.20), int(H * 0.15),
                 int(W * 0.15), int(H * 0.08)            
         )
-        self.line_code_fournisseur.setText("#"+str(int(self.recovry_id_fournisseur())+1))
         self.lable_type_fournisseur = QtWidgets.QLabel("Type de fournisseur",self.fournisseur_window)
         self.lable_type_fournisseur.setGeometry(
                 int(W * 0.36), int(H * 0.15),
@@ -206,14 +204,12 @@ class Fournisseurs(QtWidgets.QWidget):
         )
 
     #============bouton==============
-        self.bouton_add_fournisseur = QtWidgets.QPushButton("Ajeuter fournisseur",self.fournisseur_window)
-        self.bouton_add_fournisseur.setIcon(QtGui.QIcon("icons/add.png"))
-        self.bouton_add_fournisseur.setIconSize(QtCore.QSize(int(H * 5.5/ 100), int(W* 5.5 / 100)))
+        self.bouton_add_fournisseur = QtWidgets.QPushButton(self.fournisseur_window)
         self.bouton_add_fournisseur.setGeometry(
                 int(W * 0.70), int(H * 0.82),
                 int(W * 0.28), int(H * 0.12)
         ) 
-        self.bouton_add_fournisseur.clicked.connect(self.add_fournisseur) 
+         
         self.btn_active = QtWidgets.QPushButton("ACTIVE",self.fournisseur_window)
         self.btn_active.setObjectName("btn_active")
         self.btn_active.setCheckable(True)
@@ -224,8 +220,33 @@ class Fournisseurs(QtWidgets.QWidget):
                 int(W * 0.28), int(H * 0.12)           
         )
         self.btn_active.toggled.connect(lambda checked: self.btn_active.setText("ACTIVE" if checked else "ARRETER"))
-      
         
+        if reslt is False:
+           self.line_code_fournisseur.setText("#"+str(int(self.recovry_id_fournisseur())+1))
+           self.bouton_add_fournisseur.setText("Ajeuter fournisseur")
+           self.bouton_add_fournisseur.setIcon(QtGui.QIcon("icons/add.png"))
+           self.bouton_add_fournisseur.setIconSize(QtCore.QSize(int(H * 5.5/ 100), int(W* 5.5 / 100)))
+           self.bouton_add_fournisseur.clicked.connect(self.add_fournisseur)
+        else:   
+           self.line_code_fournisseur.setText("#"+str(reslt[0][0]))  
+           self.bouton_add_fournisseur.setText("Modifier fournisseur") 
+           self.bouton_add_fournisseur.setIcon(QtGui.QIcon("icons/updated.png"))    
+           self.bouton_add_fournisseur.setIconSize(QtCore.QSize(int(H * 5.5/ 100), int(W* 5.5 / 100))) 
+           self.btn_active.setVisible(True) 
+           etat = reslt[0][11] == 1
+           self.btn_active.setChecked(etat)
+           self.btn_active.setText("ACTIVE" if etat else "ARRETER")    
+           self.choix_type_fournisseur.setCurrentText(reslt[0][1])
+           self.choix_type_societe.setCurrentText(reslt[0][2])
+           self.line_nom_societe.setText(reslt[0][3])
+           self.line_nom.setText(reslt[0][4])
+           self.line_prenom.setText(reslt[0][5])
+           self.date_naissance.setDate(reslt[0][6])
+           self.line_nin.setText(reslt[0][7])
+           self.line_nif.setText(reslt[0][8])
+           self.line_add.setText(reslt[0][9])
+           self.line_tel.setText(reslt[0][10]) 
+           self.bouton_add_fournisseur.clicked.connect(self.update_fournisseur)
         self.fournisseur_window.show()
 #============function active societe===================
     def type_fournisseur(self):
@@ -372,19 +393,46 @@ class Fournisseurs(QtWidgets.QWidget):
                    #cursor.close()
                    conn.close() 
 #..........................update fournisseur........................................  
-    def update_fournisseyr(self,reslt):
-        self.line_code_fournisseur.text().strip().split("#")[-1]
-        self.choix_type_fournisseur.currentText().strip()
-        self.choix_type_societe.currentText().strip()
-        self.line_nom_societe.text().strip()
-        self.line_nom.text().strip()
-        self.line_prenom.text().strip()
-        self.date_naissance.date().toString("yyyy-MM-dd")
-        self.line_nin.text().strip()
-        self.line_nif.text().strip()
-        self.line_add.text().strip()
-        self.line_tel.text().strip()
-        result = self.verify(nin,nif,date_naissance)  
+    def update_fournisseur(self):
+            etes = 1 if self.btn_active.isChecked() else 0
+            id_fournisseur = int((self.line_code_fournisseur.text().strip()).split("#")[-1])
+            type_fournisseur = self.choix_type_fournisseur.currentText().strip()
+            genre_fournisseur = self.choix_type_societe.currentText().strip()
+            nom_societe = self.line_nom_societe.text().strip()
+            nom = self.line_nom.text().strip()
+            prenom = self.line_prenom.text().strip()
+            date_naissance = self.date_naissance.date().toString("yyyy-MM-dd")
+            nin = self.line_nin.text().strip()
+            nif = self.line_nif.text().strip()
+            adresse = self.line_add.text().strip()
+            telephone = self.line_tel.text().strip()
+            print("data=",type_fournisseur,genre_fournisseur,nom_societe,nom,prenom,date_naissance,nin,nif,telephone,adresse,etes,id_fournisseur)
+            result = self.verify(nin,nif,date_naissance)
+            if result[0]==False:
+                QMessageBox.warning(self,"Erreur de validation",str(result[1]+"\n"+result[2]+"\n"+result[3]))  
+            else:
+                try:
+                   conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+                   cursor = conn.cursor()
+                   sql_Update =("""UPDATE fournisseur SET type_fournisseur=%s,genre_fournisseur=%s,nom_societe=%s,nom=%s,prenom=%s,date_naissance=%s,nin=%s,nif=%s,telephone=%s,adresse=%s,etes=%s WHERE id_fournisseur=%s""")
+                   data =(type_fournisseur,genre_fournisseur,nom_societe,nom,prenom,date_naissance,nin,nif,telephone,adresse,etes,id_fournisseur)
+                   cursor.execute(sql_Update,data)
+                   conn.commit()
+                   QMessageBox.information(None,"Information","Le fournisseur a été modifié avec succès.")
+                except mysql.connector.Error as err:
+                       QMessageBox.critical( None,"Erreur",f"Une erreur est survenue lors de l'ajout du fournisseur :\n{err}")
+                finally:
+                     if conn.is_connected():
+                       #cursor.close()
+                       conn.close()  
+
+          
          
             
             

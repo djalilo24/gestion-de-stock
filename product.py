@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import mysql.connector
+from PyQt5.QtWidgets import QMessageBox
 class Product(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -80,9 +81,10 @@ class Product(QtWidgets.QWidget):
 
         self.label_fournisseur = QtWidgets.QLabel("Fournisseur", self.product_window)  
         self.label_fournisseur.setVisible(False)  # Masquer le label au départ
-        self.line_edite_fournisseur = QtWidgets.QComboBox(self.product_window)
-        self.line_edite_fournisseur.setPlaceholderText("Fournisseur")
-        self.line_edite_fournisseur.setVisible(False)  # Masquer le QLineEdit au départ
+        self.choix_fournisseur = QtWidgets.QComboBox(self.product_window)
+        self.choix_fournisseur.setPlaceholderText("Fournisseur")
+        self.choix_fournisseur.currentIndexChanged.connect(self.change_fournisseur)
+        self.choix_fournisseur.setVisible(False)  # Masquer le QLineEdit au départ
 
         self.lable_categorie_produit = QtWidgets.QLabel("Catégorie de produit",self.product_window)
         self.lable_categorie_produit.setVisible(False)
@@ -160,7 +162,7 @@ class Product(QtWidgets.QWidget):
     int(W * 0.05), int(H * 0.35),
     int(W * 0.15), int(H * 0.08)
 )
-        self.line_edite_fournisseur.setGeometry(
+        self.choix_fournisseur.setGeometry(
     int(W * 0.22), int(H * 0.35),
     int(W * 0.25), int(H * 0.08)
 )
@@ -236,7 +238,7 @@ class Product(QtWidgets.QWidget):
             self.q_min_label.setVisible(True)  # Afficher le label
             self.line_edite_q_min.setVisible(True)  # Afficher le QLineEdit
             self.label_fournisseur.setVisible(True)  # Afficher le label
-            self.line_edite_fournisseur.setVisible(True)  # Afficher le QLine   
+            self.choix_fournisseur.setVisible(True)  # Afficher le QLine   
             self.lable_categorie_produit.setVisible(True)
             self.choix_categorie.setVisible(True)
             self.lable_color_produit.setVisible(True)
@@ -254,3 +256,25 @@ class Product(QtWidgets.QWidget):
     
     def recovre_data(self):
         print(self.line_edite_nom.text().strip())      
+    
+    def change_fournisseur(self):
+        print("ouiiiiii")
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT id_fournisseur,type_fournisseur,genre_fournisseur,nom,prenom FROM fournisseur where etes=%s",(1,))
+            reslt = cursor.fetchone()
+            print("choix=",reslt[3])
+            self.choix_fournisseur.findText(reslt[3])
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.clos
+                   conn.close()  

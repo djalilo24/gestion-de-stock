@@ -248,7 +248,7 @@ QHeaderView::section {
         width: 25px;
         border-left: 1px solid #B8C2CC;
     }
-        QPushButton#btn_active {
+    QPushButton#btn_active {
         background-color: #27AE60;
         color: white;
         border: none;
