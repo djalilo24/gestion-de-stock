@@ -82,8 +82,8 @@ class Product(QtWidgets.QWidget):
         self.label_fournisseur = QtWidgets.QLabel("Fournisseur", self.product_window)  
         self.label_fournisseur.setVisible(False)  # Masquer le label au départ
         self.choix_fournisseur = QtWidgets.QComboBox(self.product_window)
-        self.choix_fournisseur.setPlaceholderText("Fournisseur")
-        self.choix_fournisseur.currentIndexChanged.connect(self.change_fournisseur)
+        self.choix_fournisseur.setPlaceholderText("Choisir un fournisseur")
+        #self.choix_fournisseur.currentTextChanged.connect(self.change_fournisseur)
         self.choix_fournisseur.setVisible(False)  # Masquer le QLineEdit au départ
 
         self.lable_categorie_produit = QtWidgets.QLabel("Catégorie de produit",self.product_window)
@@ -238,7 +238,8 @@ class Product(QtWidgets.QWidget):
             self.q_min_label.setVisible(True)  # Afficher le label
             self.line_edite_q_min.setVisible(True)  # Afficher le QLineEdit
             self.label_fournisseur.setVisible(True)  # Afficher le label
-            self.choix_fournisseur.setVisible(True)  # Afficher le QLine   
+            self.choix_fournisseur.setVisible(True)  # Afficher le QLine  
+            self.change_fournisseur() 
             self.lable_categorie_produit.setVisible(True)
             self.choix_categorie.setVisible(True)
             self.lable_color_produit.setVisible(True)
@@ -258,7 +259,7 @@ class Product(QtWidgets.QWidget):
         print(self.line_edite_nom.text().strip())      
     
     def change_fournisseur(self):
-        print("ouiiiiii")
+        self.choix_fournisseur.clear()
         try:
             conn = mysql.connector.connect(
                      host="localhost",
@@ -268,10 +269,14 @@ class Product(QtWidgets.QWidget):
                      connection_timeout=10,
                      use_pure=True  ) 
             cursor = conn.cursor()
-            cursor.execute("SELECT id_fournisseur,type_fournisseur,genre_fournisseur,nom,prenom FROM fournisseur where etes=%s",(1,))
-            reslt = cursor.fetchone()
-            print("choix=",reslt[3])
-            self.choix_fournisseur.findText(reslt[3])
+            cursor.execute("SELECT id_fournisseur,type_fournisseur,genre_fournisseur,nom,prenom,nom_societe FROM fournisseur where etes=%s",(1,))
+            reslt = cursor.fetchall()
+            for i in reslt:
+                if i[1]=="Personne physique":
+                    choix=f"#{i[0]} - {i[2]} _ {i[5]}"
+                else:
+                    choix = f"#{i[0]} - {i[3]} {i[4]}"
+                self.choix_fournisseur.addItem(choix)
         except mysql.connector.Error as err:
                 QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
         finally:
