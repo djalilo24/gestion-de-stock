@@ -60,7 +60,7 @@ class Product(QtWidgets.QWidget):
 
         self.labele_code_produit = QtWidgets.QLabel("Code du produit", self.product_window)
         self.line_edite_code = QtWidgets.QLineEdit(self.product_window)
-        self.line_edite_code.setPlaceholderText("Code du produit")
+        self.line_edite_code.setText("#"+str(int(self.recovry_id_produit())+1))
         self.line_edite_code.setEnabled(False)  
 
         self.labele_choix_produit = QtWidgets.QLabel("Type de produit", self.product_window)
@@ -223,7 +223,7 @@ class Product(QtWidgets.QWidget):
                 int(W * 0.70), int(H * 0.65),
                 int(W * 0.28), int(H * 0.12)
         ) 
-        self.bouton_add_produit.clicked.connect(self.recovre_data) 
+        self.bouton_add_produit.clicked.connect(self.recovre_add_produit) 
         self.bouton_add_produit.setVisible(False)     
 
         self.product_window.show()
@@ -254,10 +254,49 @@ class Product(QtWidgets.QWidget):
 
         elif selected_product == "Produit fini":
             print("Produit fini selected")
-    
-    def recovre_data(self):
-        print(self.line_edite_nom.text().strip())      
-    
+#=================function add produit,stock;achat;ligne d'achat======   
+    def recovre_add_produit(self):
+        id_produit = int((self.line_edite_code.text().strip()).split("#")[-1])  #produit
+        nom = self.line_edite_nom.text().strip()  #produit
+        type_produit = self.choix_produit.currentText() #produit
+        seuil_alerte = self.line_edite_q_min.text().strip()#produit
+        coleur = self.line_color_produit.text().strip() #produit
+        categorie = self.choix_categorie.currentText() #produit
+        texte = self.choix_fournisseur.currentText()
+        id_fournisseur = int(texte.split("#")[1].split()[0]) #achat   
+        quantite = self.line_quintite.text().strip() #stock
+        prix_unitaire = self.line_prix.text().strip()#ligne d'achat
+        date_achat = self.date_achat.date().toString("yyyy-MM-dd") #achat   
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            insert = conn.cursor()
+            sql_produit =("""INSERT INTO produit(id_produit,nom,type_produit,seuil_alerte,coleur,categorie)
+                   VALUES (%s, %s, %s, %s, %s, %s)""")
+            data_produit =(id_produit,nom,type_produit,seuil_alerte,coleur,categorie)
+            insert.execute(sql_produit,data_produit)
+            sql_achat = ("""INSERT INTO achat(id_fournisseur,date_achat) VALUES (%s, %s)""")
+            data_achat = (id_fournisseur,date_achat)
+            insert.execute(sql_achat,data_achat)
+            id_achat = insert.lastrowid
+            sql_ligne_achat = ("""INSERT INTO ligne_achat(id_achat,id_produit,quantite,prix_unitaire) VALUES (%s, %s,%s, %s)""")
+            data_ligne_achat = (id_achat,id_produit,quantite,prix_unitaire)         
+            insert.execute(sql_ligne_achat,data_ligne_achat)
+            conn.commit()
+            QMessageBox.information(None,"Information","Le produit a été ajouté avec succès.")
+            self.product_window.close()
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.clos
+                   conn.close() 
+#==================function recovry list of supplier==================   
     def change_fournisseur(self):
         self.choix_fournisseur.clear()
         try:
@@ -283,3 +322,27 @@ class Product(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.clos
                    conn.close()  
+#=============function recovry id_fournisseur=============  
+    def recovry_id_produit(self):
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT MAX(id_produit) FROM produit ")
+            reslt = cursor.fetchone()
+            print ("rrrr",reslt)
+            if reslt[0] is None:
+                return 0
+            else :
+                return reslt[0]
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close() 

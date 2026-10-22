@@ -292,6 +292,7 @@ class Fournisseurs(QtWidgets.QWidget):
                    cursor.execute(sql_insert,data)
                    conn.commit()
                    QMessageBox.information(None,"Information","Le fournisseur a été ajouté avec succès.")
+                   self.product_window.close()
                 except mysql.connector.Error as err:
                        QMessageBox.critical( None,"Erreur",f"Une erreur est survenue lors de l'ajout du fournisseur :\n{err}")
                 finally:

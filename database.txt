@@ -28,9 +28,10 @@ CREATE TABLE produit (
     id_produit INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
     type_produit ENUM(
-        'matiere_premiere',
-        'produit_fini'
+        'Matière première',
+        'Produit fini'
     ) NOT NULL,
+    Categorie VARCHAR(20),
     unite VARCHAR(30) NOT NULL,
     seuil_alerte DECIMAL(12,3) DEFAULT 0
 );
