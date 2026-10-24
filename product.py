@@ -31,20 +31,27 @@ class Product(QtWidgets.QWidget):
         self.layout_table.addLayout(self.headre_layout)
         #====================table product=========================
         self.table_prodect = QtWidgets.QTableWidget()
-        self.table_prodect.setRowCount(3)
-        self.table_prodect.setColumnCount(5)
-        self.table_prodect.setHorizontalHeaderLabels(["ID", "Nom", "Prix", "Quantité", "Description"])  
-        data = [
-           ["1", "Tissu coton", "Matière première", "150", "500"],
-           ["2", "Fil à coudre", "Matière première", "80", "120"],
-           ["3", "Chemise", "Produit fini", "25", "2500"]
-            ]   
-        for row, values in enumerate(data):
-           for col, value in enumerate(values):
-               self.table_prodect.setItem(row, col,QtWidgets.QTableWidgetItem(value))
+        self.table_prodect.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.table_prodect.setColumnCount(6)
+        all_produits=self.recovry_all_produits()
+        self.table_prodect.setRowCount(len(all_produits))
+        self.table_prodect.setHorizontalHeaderLabels(["ID", "Nom", "type produit", "Categorie","Coleur", "Quantité"]) 
+        for row, values in enumerate(all_produits):
+           if values[5]>=values[6]:
+               color=QtGui.QColor("#90EE90")
+           else:
+               color=QtGui.QColor("#FFC8C8")  
+           for col in range(6):
+                value = values[col]
+                item = QtWidgets.QTableWidgetItem("" if value is None else str(value))   
+                item.setBackground(color)
+                self.table_prodect.setItem(row, col,item)
+                self.table_prodect.resizeColumnsToContents()
         self.table_prodect.horizontalHeader().setStretchLastSection(True)
-        self.table_prodect.setAlternatingRowColors(True) 
-        self.layout_table.addWidget(self.table_prodect)      
+        self.table_prodect.setAlternatingRowColors(False) 
+        self.table_prodect.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.table_prodect.customContextMenuRequested.connect(self.show_list_menu)
+        self.layout_table.addWidget(self.table_prodect)     
 
     def form_product(self):
         self.product_window = QtWidgets.QWidget()
@@ -271,7 +278,7 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="guelma24@",
+                     password="alilomoh24021989@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -280,6 +287,9 @@ class Product(QtWidgets.QWidget):
                    VALUES (%s, %s, %s, %s, %s, %s)""")
             data_produit =(id_produit,nom,type_produit,seuil_alerte,coleur,categorie)
             insert.execute(sql_produit,data_produit)
+            sql_stock =("""INSERT INTO stock(id_produit,quantite)VALUES (%s, %s)""")
+            data_stock =(id_produit,quantite)
+            insert.execute(sql_stock,data_stock)  
             sql_achat = ("""INSERT INTO achat(id_fournisseur,date_achat) VALUES (%s, %s)""")
             data_achat = (id_fournisseur,date_achat)
             insert.execute(sql_achat,data_achat)
@@ -303,7 +313,7 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="guelma24@",
+                     password="alilomoh24021989@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -322,13 +332,13 @@ class Product(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.clos
                    conn.close()  
-#=============function recovry id_fournisseur=============  
+#=============function recovry id_produit=============  
     def recovry_id_produit(self):
         try:
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="guelma24@",
+                     password="alilomoh24021989@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -346,3 +356,46 @@ class Product(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.close()
                    conn.close() 
+#-------------------function recovry produits----------------------
+    def recovry_all_produits(self):
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="alilomoh24021989@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT P.id_produit,P.nom,P.type_produit,P.Categorie,P.coleur,S.quantite,P.seuil_alerte FROM produit P "\
+            "JOIN stock S on P.id_produit=S.id_produit ")
+            reslt = cursor.fetchall()
+            return reslt 
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close() 
+#..........................function menu liste........................................
+    def show_list_menu(self, pos):
+        index = self.table_prodect.indexAt(pos)
+        if not index.isValid():
+           return
+        row = index.row()
+        self.table_prodect.selectRow(row)  
+        menu = QtWidgets.QMenu(self.table_prodect)
+        augmante = menu.addAction("Augmenté la quintité")
+        modifier = menu.addAction("Modifier les informations")
+        action = menu.exec_(self.table_prodect.viewport().mapToGlobal(pos))
+        if action == augmante:
+             self.augment()
+        elif action == modifier:
+           self.modify_prouit()
+#=====================function augment===============================
+    def augment(self):
+        dialog = QtWidgets.QDialog(self.table_prodect)
+        dialog.setWindowTitle("Augmenté la quintité")
+        dialog.setFixedSize(300, 150)
+
+        dialog.exec_()

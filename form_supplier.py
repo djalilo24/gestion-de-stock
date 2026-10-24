@@ -339,7 +339,7 @@ class Fournisseurs(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.close()
                    conn.close() 
-#-----------------------------------------
+#-------------------function recovry fournisseur----------------------
     def recovry_all_fournisseur(self):
         try:
             conn = mysql.connector.connect(
