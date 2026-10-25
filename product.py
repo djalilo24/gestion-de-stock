@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import mysql.connector
 from PyQt5.QtWidgets import QMessageBox
+from pip._vendor.rich.filesize import decimal
+from decimal import Decimal
 class Product(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -278,7 +280,7 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -313,7 +315,7 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
@@ -338,14 +340,13 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
             cursor = conn.cursor()
             cursor.execute("SELECT MAX(id_produit) FROM produit ")
             reslt = cursor.fetchone()
-            print ("rrrr",reslt)
             if reslt[0] is None:
                 return 0
             else :
@@ -362,12 +363,12 @@ class Product(QtWidgets.QWidget):
             conn = mysql.connector.connect(
                      host="localhost",
                      user="root",
-                     password="alilomoh24021989@",
+                     password="guelma24@",
                      database="nakhla",
                      connection_timeout=10,
                      use_pure=True  ) 
             cursor = conn.cursor()
-            cursor.execute("SELECT P.id_produit,P.nom,P.type_produit,P.Categorie,P.coleur,S.quantite,P.seuil_alerte FROM produit P "\
+            cursor.execute("SELECT CONCAT('#',P.id_produit),P.nom,P.type_produit,P.Categorie,P.coleur,S.quantite,P.seuil_alerte FROM produit P "\
             "JOIN stock S on P.id_produit=S.id_produit ")
             reslt = cursor.fetchall()
             return reslt 
@@ -394,8 +395,66 @@ class Product(QtWidgets.QWidget):
            self.modify_prouit()
 #=====================function augment===============================
     def augment(self):
-        dialog = QtWidgets.QDialog(self.table_prodect)
-        dialog.setWindowTitle("Augmenté la quintité")
-        dialog.setFixedSize(300, 150)
+        row_count = self.table_prodect.currentRow()
+        item = self.table_prodect.item(row_count, 0)
+        self.augment_window = QtWidgets.QWidget()
+        self.augment_window.setWindowTitle("Ajouter un produit")
 
-        dialog.exec_()
+        screen = QtWidgets.QApplication.primaryScreen()
+        geometry = screen.availableGeometry()
+        w = int(geometry.width() * 0.20)
+        h = int(geometry.height() * 0.15)
+        self.augment_window.resize(w, h)
+
+        self.labele_augment = QtWidgets.QLabel("entrée valeur augmantée", self.augment_window)
+        self.labele_augment.setGeometry(
+            int(w * 0.2), int(h * 0.03),
+            int(w * 0.7), int(h * 0.2)
+        )
+        
+        self.line_augment = QtWidgets.QLineEdit(self.augment_window)
+        validator = QtGui.QDoubleValidator(0.0, 1000000.0, 4, self.line_augment)
+        validator.setNotation(QtGui.QDoubleValidator.StandardNotation)
+        locale = QtCore.QLocale(QtCore.QLocale.C)
+        validator.setLocale(locale)
+        self.line_augment.setValidator(validator)
+        self.line_augment.setGeometry(
+            int(w * 0.3), int(h * 0.25),
+            int(w * 0.4), int(h * 0.3)
+        )
+        self.btn_augment = QtWidgets.QPushButton("Valider",self.augment_window)
+        self.btn_augment.setGeometry(
+            int(w * 0.3), int(h * 0.60),
+            int(w * 0.4), int(h * 0.3)
+        )
+        self.btn_augment.clicked.connect(lambda: self.augment_produit(item.text()))
+        self.augment_window.show()
+#============================
+    def augment_produit(self,item):
+        id_produit=int(item.split("#")[-1])
+        augment=float(self.line_augment.text())
+        print(augment)
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            cursor = conn.cursor()
+            cursor.execute("SELECT quantite FROM stock WHERE id_produit=%s",(id_produit,))
+            reslt = cursor.fetchone()
+            if reslt[0] is None:
+                return 
+            new_quintity = float(reslt[0])+augment     
+            cursor.execute("UPDATE Stock SET quantite=%s where id_produit=%s",(new_quintity,id_produit,))
+            conn.commit()
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur  :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.close()
+                   conn.close()
+        self.augment_window.close()
+        
