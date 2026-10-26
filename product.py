@@ -35,25 +35,28 @@ class Product(QtWidgets.QWidget):
         self.table_prodect = QtWidgets.QTableWidget()
         self.table_prodect.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.table_prodect.setColumnCount(6)
-        all_produits=self.recovry_all_produits()
-        self.table_prodect.setRowCount(len(all_produits))
+        all_produits=self.recovry_all_produits()        
         self.table_prodect.setHorizontalHeaderLabels(["ID", "Nom", "type produit", "Categorie","Coleur", "Quantité"]) 
+        self.update_table(all_produits)
+#====================function show table=================
+    def update_table(self,all_produits):
+        self.table_prodect.setRowCount(len(all_produits))
         for row, values in enumerate(all_produits):
-           if values[5]>=values[6]:
-               color=QtGui.QColor("#90EE90")
-           else:
-               color=QtGui.QColor("#FFC8C8")  
-           for col in range(6):
+            if values[5]>=values[6]:
+                    color=QtGui.QColor("#90EE90")
+            else:
+                    color=QtGui.QColor("#FFC8C8")  
+            for col in range(6):
                 value = values[col]
                 item = QtWidgets.QTableWidgetItem("" if value is None else str(value))   
                 item.setBackground(color)
-                self.table_prodect.setItem(row, col,item)
-                self.table_prodect.resizeColumnsToContents()
-        self.table_prodect.horizontalHeader().setStretchLastSection(True)
+                self.table_prodect.setItem(row, col,item)       
         self.table_prodect.setAlternatingRowColors(False) 
         self.table_prodect.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.table_prodect.customContextMenuRequested.connect(self.show_list_menu)
-        self.layout_table.addWidget(self.table_prodect)     
+        self.table_prodect.customContextMenuRequested.connect(self.show_list_menu)           
+        self.table_prodect.resizeColumnsToContents()
+        self.table_prodect.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.layout_table.addWidget(self.table_prodect) 
 
     def form_product(self):
         self.product_window = QtWidgets.QWidget()
@@ -392,7 +395,7 @@ class Product(QtWidgets.QWidget):
         if action == augmante:
              self.augment()
         elif action == modifier:
-           self.modify_prouit()
+             self.modify_prouit()
 #=====================function augment===============================
     def augment(self):
         row_count = self.table_prodect.currentRow()
@@ -456,5 +459,52 @@ class Product(QtWidgets.QWidget):
                 if conn.is_connected():
                    #cursor.close()
                    conn.close()
+        all_produits=self.recovry_all_produits()
+        print(all_produits)
+        self.update_table(all_produits)
         self.augment_window.close()
-        
+#====================function modify produit==================
+    def modify_produit(self):
+        id_produit = int((self.line_edite_code.text().strip()).split("#")[-1])  #produit
+        nom = self.line_edite_nom.text().strip()  #produit
+        type_produit = self.choix_produit.currentText() #produit
+        seuil_alerte = self.line_edite_q_min.text().strip()#produit
+        coleur = self.line_color_produit.text().strip() #produit
+        categorie = self.choix_categorie.currentText() #produit
+        texte = self.choix_fournisseur.currentText()
+        id_fournisseur = int(texte.split("#")[1].split()[0]) #achat   
+        quantite = self.line_quintite.text().strip() #stock
+        prix_unitaire = self.line_prix.text().strip()#ligne d'achat
+        date_achat = self.date_achat.date().toString("yyyy-MM-dd") #achat   
+        try:
+            conn = mysql.connector.connect(
+                     host="localhost",
+                     user="root",
+                     password="guelma24@",
+                     database="nakhla",
+                     connection_timeout=10,
+                     use_pure=True  ) 
+            update_produit = conn.cursor()
+            sql_produit =("""UPDATE produit SET nom=%s,type_produit=%s,seuil_alerte=%s,coleur=%s,categorie=%s WHERE id_produit=%s
+                          AND NOT (nom<=>%s and type_produit<=>%s and seuil_alerte<=>%s and coleur<=>%s and categorie=%s)""")
+            data_produit =(nom,type_produit,seuil_alerte,coleur,categorie,id_produit,nom,type_produit,seuil_alerte,coleur,categorie)
+            update_produit.execute(sql_produit,data_produit)
+            sql_stock =("""UPDATE stock SET quantite=%s WHERE id_produit=%s AND NOT(quantite<=>%s)""")
+            data_stock =(quantite,id_produit,quantite)
+            update_produit.execute(sql_stock,data_stock)  
+            sql_achat = ("""UPDATE achat SET id_fournisseur=%s,date_achat=%s WHERE ) AND NOT(id_fournisseur=%s,date_achat=%s)""")
+            data_achat = (id_fournisseur,date_achat,id_fournisseur,date_achat)
+            update_produit.execute(sql_achat,data_achat)
+            sql_ligne_achat = ("""UPDATE ligne_achat SET quantite=%s,prix_unitaire=%s WHERE id_produit=%s)
+                               AND NOT (quantite=%s,prix_unitaire=%s)""")
+            data_ligne_achat = (quantite,prix_unitaire,id_produit,quantite,prix_unitaire)         
+            update_produit.execute(sql_ligne_achat,data_ligne_achat)
+            conn.commit()
+            QMessageBox.information(None,"Information","Le produit a été ajouté avec succès.")
+            self.product_window.close()
+        except mysql.connector.Error as err:
+                QMessageBox.critical( None,"Erreur",f"Une erreur est recuperation id du fournisseur :\n{err}")
+        finally:
+                if conn.is_connected():
+                   #cursor.clos
+                   conn.close()         
